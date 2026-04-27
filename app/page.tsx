@@ -4,26 +4,26 @@ import { useState, useRef } from "react";
 
 export default function PoliticalAxisQuiz() {
   const questions = [
-    "Em molesta que els plans canviïn a última hora.",
-    "Improviso fàcilment quan cal.",
-    "Les normes ajuden a evitar problemes.",
-    "M’agrada provar coses noves encara que surtin malament.",
-    "M’agrada tenir les coses organitzades.",
-    "No em preocupa gaire el desordre si tot acaba funcionant.",
-    "Prefereixo estabilitat abans que risc.",
-    "Actuo sovint per impuls.",
-    "Si puc sortir-ne benefici, busco la millor jugada.",
-    "Confio en la bona fe de la gent.",
-    "Quan algú em falla, no ho oblido fàcilment.",
-    "Sovint peco d’innocent en algunes situacions.",
-    "Crec que de vegades cal ser pragmàtic encara que no agradi.",
-    "Prenc decisions ràpides que després revisaria.",
-    "Sé trobar el punt feble d’algú en una discussió.",
-    "A vegades faig coses sense pensar-les prou.",
-    "M’agrada planificar amb temps.",
-    "Canvio d’opinió fàcilment si apareix una opció millor.",
-    "Si puc evitar conflictes, ho intento.",
-    "A vegades faig bromes o accions que compliquen situacions."
+    "Quan organitzo alguna cosa, prefereixo tenir-ho tot lligat.",
+    "Si un pla es complica, acostumo a adaptar-me ràpid.",
+    "M’incomoda no saber què passarà després.",
+    "Improvisar em sembla estimulant.",
+    "Acostumo a anticipar problemes abans que apareguin.",
+    "M’agrada deixar marge perquè les coses passin soles.",
+    "Quan hi ha caos, intento posar ordre.",
+    "Prenc decisions importants bastant ràpid.",
+    "Si hi ha una oportunitat clara, la sé aprofitar.",
+    "Prefereixo confiar abans que sospitar.",
+    "Quan algú em decep, ho tinc molt present.",
+    "Tinc tendència a donar segones oportunitats.",
+    "En una negociació, acostumo a pensar en avantatges mutus.",
+    "Si puc guanyar-hi alguna cosa, acostumo a buscar la manera.",
+    "Em fixo fàcilment en les contradiccions dels altres.",
+    "A vegades reacciono abans de pensar-ho del tot.",
+    "M’agrada tenir rutines estables.",
+    "Canviar de direcció no em costa gaire.",
+    "Evito tensions encara que tingui raó.",
+    "Hi ha moments en què cal fer el que convé, no el que queda bé."
   ];
 
   const [answers, setAnswers] = useState<number[]>(Array(20).fill(3));
@@ -113,7 +113,6 @@ export default function PoliticalAxisQuiz() {
 
   return (
     <div className="min-h-screen bg-black text-white px-4 py-8 md:p-8">
-      {/* Header sticky */}
       <div className="sticky top-0 z-50 bg-zinc-800 border-b border-zinc-700 shadow-xl py-10 px-4">
         <div className="max-w-4xl mx-auto space-y-6">
           <h1 className="text-3xl md:text-5xl font-bold text-center">
@@ -142,7 +141,6 @@ export default function PoliticalAxisQuiz() {
         </div>
       </div>
 
-      {/* Preguntes */}
       <div className="max-w-4xl mx-auto space-y-6 mt-8">
         {questions.map((q, i) => (
           <div
@@ -152,7 +150,7 @@ export default function PoliticalAxisQuiz() {
             }}
             className="bg-zinc-900 rounded-2xl p-4 shadow"
           >
-            <p className="mb-3 text-sm md:text-base">
+            <p className="mb-4 text-sm md:text-base">
               {i + 1}. {q}
             </p>
 
@@ -167,13 +165,16 @@ export default function PoliticalAxisQuiz() {
               className="w-full"
             />
 
-            <p className="text-sm text-zinc-400 mt-2">
-              Resposta: {answers[i]}
-            </p>
+            <div className="flex justify-between text-xs text-zinc-400 mt-2 px-1">
+              <span>1</span>
+              <span>2</span>
+              <span>3</span>
+              <span>4</span>
+              <span>5</span>
+            </div>
           </div>
         ))}
 
-        {/* Botons */}
         <div className="flex gap-4 flex-col md:flex-row">
           <button
             onClick={calculate}
@@ -195,7 +196,6 @@ export default function PoliticalAxisQuiz() {
           </button>
         </div>
 
-        {/* Resultat */}
         {result && (
           <>
             <div className="bg-zinc-800 rounded-2xl p-6 space-y-4">
@@ -209,7 +209,6 @@ export default function PoliticalAxisQuiz() {
               </p>
             </div>
 
-            {/* Mapa */}
             <div className="bg-zinc-900 rounded-2xl p-12 md:p-20">
               <h2 className="text-2xl font-bold mb-20 text-center">
                 Mapa 2D
