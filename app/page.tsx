@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function PoliticalAxisQuiz() {
   const questions = [
@@ -27,16 +27,35 @@ export default function PoliticalAxisQuiz() {
   ];
 
   const [answers, setAnswers] = useState<number[]>(Array(20).fill(3));
+  const [answered, setAnswered] = useState<boolean[]>(
+    Array(20).fill(false)
+  );
 
   const [result, setResult] = useState<{
     ordre: number;
     fdp: number;
   } | null>(null);
 
+  const mapRef = useRef<HTMLDivElement>(null);
+  const questionRefs = useRef<(HTMLDivElement | null)[]>([]);
+
   const updateAnswer = (index: number, value: number) => {
-    const next = [...answers];
-    next[index] = value;
-    setAnswers(next);
+    const nextAnswers = [...answers];
+    nextAnswers[index] = value;
+    setAnswers(nextAnswers);
+
+    const nextAnswered = [...answered];
+    nextAnswered[index] = true;
+    setAnswered(nextAnswered);
+
+    const nextQuestion = questionRefs.current[index + 1];
+
+    if (nextQuestion) {
+      nextQuestion.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
   };
 
   const calculate = () => {
@@ -49,6 +68,17 @@ export default function PoliticalAxisQuiz() {
       (answers[9] + answers[11] + answers[13] + answers[15] + answers[19]);
 
     setResult({ ordre, fdp });
+  };
+
+  const resetQuiz = () => {
+    setAnswers(Array(20).fill(3));
+    setAnswered(Array(20).fill(false));
+    setResult(null);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   };
 
   const getQuadrant = () => {
@@ -66,21 +96,6 @@ export default function PoliticalAxisQuiz() {
     return "Caos + Gilipolles";
   };
 
-  const getDescription = () => {
-    if (!result) return "";
-
-    if (result.ordre >= 0 && result.fdp >= 0)
-      return "Estrateg fred: estructurat, calculador i implacable.";
-
-    if (result.ordre >= 0 && result.fdp < 0)
-      return "Buròcrata del caos contingut: organitzat però innocent.";
-
-    if (result.ordre < 0 && result.fdp >= 0)
-      return "Agent desestabilitzador: imprevisible i perillós.";
-
-    return "Força de la natura: caos pur amb bona fe dubtosa.";
-  };
-
   const getMapPosition = () => {
     if (!result) return { x: 50, y: 50 };
 
@@ -90,30 +105,51 @@ export default function PoliticalAxisQuiz() {
     return { x, y };
   };
 
-  const shareResult = async () => {
-    const text = `He fet el Political Axis de la vida i el meu resultat és: ${getQuadrant()} — ${getDescription()}`;
-
-    await navigator.clipboard.writeText(text);
-
-    alert("Resultat copiat al porta-retalls!");
-  };
+  const answeredQuestions = answered.filter(Boolean).length;
+  const progress = (answeredQuestions / questions.length) * 100;
+  const allAnswered = answeredQuestions === questions.length;
 
   const point = getMapPosition();
 
   return (
     <div className="min-h-screen bg-black text-white px-4 py-8 md:p-8">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-3xl md:text-5xl font-bold text-center">
-          Political Axis de la vida
-        </h1>
+      {/* Header sticky */}
+      <div className="sticky top-0 z-50 bg-zinc-800 border-b border-zinc-700 shadow-xl py-10 px-4">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <h1 className="text-3xl md:text-5xl font-bold text-center">
+            Political Axis de la vida
+          </h1>
 
-        <p className="text-zinc-400 text-center">
-          Respon de 1 (gens d’acord) a 5 (molt d’acord)
-        </p>
+          <p className="text-zinc-300 text-center text-lg">
+            Respon de 1 (gens d’acord) a 5 (molt d’acord)
+          </p>
 
+          <div className="space-y-3">
+            <div className="flex justify-between text-sm text-zinc-300">
+              <span>Progrés</span>
+              <span>
+                {answeredQuestions}/{questions.length}
+              </span>
+            </div>
+
+            <div className="w-full bg-zinc-700 rounded-full h-4 overflow-hidden">
+              <div
+                className="bg-white h-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Preguntes */}
+      <div className="max-w-4xl mx-auto space-y-6 mt-8">
         {questions.map((q, i) => (
           <div
             key={i}
+            ref={(el) => {
+              questionRefs.current[i] = el;
+            }}
             className="bg-zinc-900 rounded-2xl p-4 shadow"
           >
             <p className="mb-3 text-sm md:text-base">
@@ -137,13 +173,29 @@ export default function PoliticalAxisQuiz() {
           </div>
         ))}
 
-        <button
-          onClick={calculate}
-          className="w-full px-6 py-4 rounded-2xl bg-white text-black font-semibold text-lg"
-        >
-          Calcula resultat
-        </button>
+        {/* Botons */}
+        <div className="flex gap-4 flex-col md:flex-row">
+          <button
+            onClick={calculate}
+            disabled={!allAnswered}
+            className={`w-full px-6 py-4 rounded-2xl font-semibold text-lg transition ${
+              allAnswered
+                ? "bg-white text-black"
+                : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
+            }`}
+          >
+            Calcula resultat
+          </button>
 
+          <button
+            onClick={resetQuiz}
+            className="w-full px-6 py-4 rounded-2xl bg-zinc-700 text-white font-semibold text-lg"
+          >
+            Reinicia test
+          </button>
+        </div>
+
+        {/* Resultat */}
         {result && (
           <>
             <div className="bg-zinc-800 rounded-2xl p-6 space-y-4">
@@ -155,25 +207,18 @@ export default function PoliticalAxisQuiz() {
               <p className="text-xl font-semibold">
                 {getQuadrant()}
               </p>
-
-              <p className="text-zinc-300 italic">
-                {getDescription()}
-              </p>
-
-              <button
-                onClick={shareResult}
-                className="mt-4 px-5 py-3 rounded-xl bg-white text-black font-semibold"
-              >
-                Compartir resultat
-              </button>
             </div>
 
-            <div className="bg-zinc-900 rounded-2xl p-8 md:p-16">
-              <h2 className="text-2xl font-bold mb-8 text-center">
+            {/* Mapa */}
+            <div className="bg-zinc-900 rounded-2xl p-12 md:p-20">
+              <h2 className="text-2xl font-bold mb-20 text-center">
                 Mapa 2D
               </h2>
 
-              <div className="relative w-full aspect-square border-4 border-zinc-300 rounded-xl">
+              <div
+                ref={mapRef}
+                className="relative w-full aspect-square border-4 border-zinc-300 rounded-xl"
+              >
                 <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
                   <div className="bg-red-400" />
                   <div className="bg-blue-400" />
@@ -192,11 +237,11 @@ export default function PoliticalAxisQuiz() {
                   Caos
                 </div>
 
-                <div className="absolute -left-24 md:-left-40 top-1/2 -translate-y-1/2 font-bold text-white text-sm md:text-2xl whitespace-nowrap">
+                <div className="absolute -left-16 md:-left-24 top-1/2 -translate-y-1/2 -rotate-90 font-bold text-white text-sm md:text-xl whitespace-nowrap">
                   Fill de puta
                 </div>
 
-                <div className="absolute -right-20 md:-right-36 top-1/2 -translate-y-1/2 font-bold text-white text-sm md:text-2xl whitespace-nowrap">
+                <div className="absolute -right-16 md:-right-24 top-1/2 -translate-y-1/2 rotate-90 font-bold text-white text-sm md:text-xl whitespace-nowrap">
                   Gilipolles
                 </div>
 
