@@ -41,28 +41,12 @@ export default function PoliticalAxisQuiz() {
 
   const calculate = () => {
     const ordre =
-      (answers[0] +
-        answers[2] +
-        answers[4] +
-        answers[6] +
-        answers[16]) -
-      (answers[1] +
-        answers[3] +
-        answers[5] +
-        answers[7] +
-        answers[17]);
+      (answers[0] + answers[2] + answers[4] + answers[6] + answers[16]) -
+      (answers[1] + answers[3] + answers[5] + answers[7] + answers[17]);
 
     const fdp =
-      (answers[8] +
-        answers[10] +
-        answers[12] +
-        answers[14] +
-        answers[18]) -
-      (answers[9] +
-        answers[11] +
-        answers[13] +
-        answers[15] +
-        answers[19]);
+      (answers[8] + answers[10] + answers[12] + answers[14] + answers[18]) -
+      (answers[9] + answers[11] + answers[13] + answers[15] + answers[19]);
 
     setResult({ ordre, fdp });
   };
@@ -82,6 +66,21 @@ export default function PoliticalAxisQuiz() {
     return "Caos + Gilipolles";
   };
 
+  const getDescription = () => {
+    if (!result) return "";
+
+    if (result.ordre >= 0 && result.fdp >= 0)
+      return "Estrateg fred: estructurat, calculador i implacable.";
+
+    if (result.ordre >= 0 && result.fdp < 0)
+      return "Buròcrata del caos contingut: organitzat però innocent.";
+
+    if (result.ordre < 0 && result.fdp >= 0)
+      return "Agent desestabilitzador: imprevisible i perillós.";
+
+    return "Força de la natura: caos pur amb bona fe dubtosa.";
+  };
+
   const getMapPosition = () => {
     if (!result) return { x: 50, y: 50 };
 
@@ -91,16 +90,24 @@ export default function PoliticalAxisQuiz() {
     return { x, y };
   };
 
+  const shareResult = async () => {
+    const text = `He fet el Political Axis de la vida i el meu resultat és: ${getQuadrant()} — ${getDescription()}`;
+
+    await navigator.clipboard.writeText(text);
+
+    alert("Resultat copiat al porta-retalls!");
+  };
+
   const point = getMapPosition();
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-black text-white px-4 py-8 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-4xl font-bold">
+        <h1 className="text-3xl md:text-5xl font-bold text-center">
           Political Axis de la vida
         </h1>
 
-        <p className="text-zinc-400">
+        <p className="text-zinc-400 text-center">
           Respon de 1 (gens d’acord) a 5 (molt d’acord)
         </p>
 
@@ -109,7 +116,7 @@ export default function PoliticalAxisQuiz() {
             key={i}
             className="bg-zinc-900 rounded-2xl p-4 shadow"
           >
-            <p className="mb-3">
+            <p className="mb-3 text-sm md:text-base">
               {i + 1}. {q}
             </p>
 
@@ -132,31 +139,41 @@ export default function PoliticalAxisQuiz() {
 
         <button
           onClick={calculate}
-          className="px-6 py-3 rounded-2xl bg-white text-black font-semibold"
+          className="w-full px-6 py-4 rounded-2xl bg-white text-black font-semibold text-lg"
         >
           Calcula resultat
         </button>
 
         {result && (
           <>
-            <div className="bg-zinc-800 rounded-2xl p-6 space-y-2">
+            <div className="bg-zinc-800 rounded-2xl p-6 space-y-4">
               <h2 className="text-2xl font-bold">Resultat</h2>
 
               <p>Eix Ordre/Caos: {result.ordre}</p>
               <p>Eix Fill de puta/Gilipolles: {result.fdp}</p>
 
               <p className="text-xl font-semibold">
-                Quadrant: {getQuadrant()}
+                {getQuadrant()}
               </p>
+
+              <p className="text-zinc-300 italic">
+                {getDescription()}
+              </p>
+
+              <button
+                onClick={shareResult}
+                className="mt-4 px-5 py-3 rounded-xl bg-white text-black font-semibold"
+              >
+                Compartir resultat
+              </button>
             </div>
 
-            <div className="bg-zinc-900 rounded-2xl p-16">
-              <h2 className="text-2xl font-bold mb-8">
+            <div className="bg-zinc-900 rounded-2xl p-8 md:p-16">
+              <h2 className="text-2xl font-bold mb-8 text-center">
                 Mapa 2D
               </h2>
 
               <div className="relative w-full aspect-square border-4 border-zinc-300 rounded-xl">
-                {/* Quadrants de colors */}
                 <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
                   <div className="bg-red-400" />
                   <div className="bg-blue-400" />
@@ -164,30 +181,27 @@ export default function PoliticalAxisQuiz() {
                   <div className="bg-purple-400" />
                 </div>
 
-                {/* Eixos */}
                 <div className="absolute top-1/2 left-0 w-full h-1 bg-black" />
                 <div className="absolute left-1/2 top-0 h-full w-1 bg-black" />
 
-                {/* Etiquetes fora del gràfic */}
-                <div className="absolute -top-14 left-1/2 -translate-x-1/2 font-bold text-white text-2xl">
+                <div className="absolute -top-14 left-1/2 -translate-x-1/2 font-bold text-white text-lg md:text-2xl">
                   Ordre
                 </div>
 
-                <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 font-bold text-white text-2xl">
+                <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 font-bold text-white text-lg md:text-2xl">
                   Caos
                 </div>
 
-                <div className="absolute -left-40 top-1/2 -translate-y-1/2 font-bold text-white text-2xl whitespace-nowrap">
+                <div className="absolute -left-24 md:-left-40 top-1/2 -translate-y-1/2 font-bold text-white text-sm md:text-2xl whitespace-nowrap">
                   Fill de puta
                 </div>
 
-                <div className="absolute -right-36 top-1/2 -translate-y-1/2 font-bold text-white text-2xl whitespace-nowrap">
+                <div className="absolute -right-20 md:-right-36 top-1/2 -translate-y-1/2 font-bold text-white text-sm md:text-2xl whitespace-nowrap">
                   Gilipolles
                 </div>
 
-                {/* Punt del resultat */}
                 <div
-                  className="absolute w-6 h-6 rounded-full bg-white border-4 border-black z-10"
+                  className="absolute w-6 h-6 rounded-full bg-white border-4 border-black z-10 transition-all duration-700 ease-out"
                   style={{
                     left: `${point.x}%`,
                     top: `${point.y}%`,
