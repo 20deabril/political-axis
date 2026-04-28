@@ -165,6 +165,21 @@ export default function PoliticalAxisQuiz() {
     });
 
     setResult({ ordre, fdp });
+
+fetch(
+  "https://script.google.com/macros/s/AKfycbzGOwarHVmaWCWrrT5JELdfauvi-nRghtWqH5LY7zxY6LUnmzLQ5o8BVQn4BUjTOHTs/exec",
+  {
+    method: "POST",
+    body: JSON.stringify({
+      name: playerName || "Anònim",
+      total: questions.length,
+      questions: questions.map((q) => q.text),
+      answers,
+      ordre,
+      fdp
+    })
+  }
+);
   };
 
   const resetQuiz = () => {
