@@ -195,15 +195,22 @@ export default function PoliticalAxisQuiz() {
       }
     : { x: 50, y: 50 };
 
+  const backgroundStyle = {
+    backgroundImage: "url('/background.png')"
+  };
+
   if (!quizStarted) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
-        <div className="max-w-xl w-full text-center space-y-8">
+      <div
+        className="min-h-screen bg-cover bg-center bg-fixed text-white flex items-center justify-center px-6"
+        style={backgroundStyle}
+      >
+        <div className="max-w-xl w-full text-center space-y-8 bg-violet-950/70 backdrop-blur-md rounded-3xl p-8">
           <h1 className="text-4xl md:text-6xl font-bold">
             Political Axis de la vida
           </h1>
 
-          <p className="text-zinc-400 text-lg">
+          <p className="text-violet-300 text-lg">
             Quantes preguntes vols?
           </p>
 
@@ -212,27 +219,27 @@ export default function PoliticalAxisQuiz() {
             placeholder="Nom (opcional)"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
-            className="w-full p-4 rounded-2xl bg-zinc-900 text-white border border-zinc-700 outline-none focus:border-white"
+            className="w-full p-4 rounded-2xl bg-slate-950/70 text-white border border-white/10 outline-none focus:border-violet-300"
           />
 
           <div className="space-y-4">
             <button
               onClick={() => startQuiz(20)}
-              className="w-full p-5 rounded-2xl bg-zinc-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98] active:bg-zinc-300"
+              className="w-full p-5 rounded-2xl bg-violet-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98]"
             >
               20 (ràpid)
             </button>
 
             <button
               onClick={() => startQuiz(30)}
-              className="w-full p-5 rounded-2xl bg-zinc-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98] active:bg-zinc-300"
+              className="w-full p-5 rounded-2xl bg-violet-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98]"
             >
               30 (normal)
             </button>
 
             <button
               onClick={() => startQuiz(40)}
-              className="w-full p-5 rounded-2xl bg-zinc-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98] active:bg-zinc-300"
+              className="w-full p-5 rounded-2xl bg-violet-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98]"
             >
               40 (profund)
             </button>
@@ -243,30 +250,33 @@ export default function PoliticalAxisQuiz() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 py-8 md:p-8">
-      <div className="sticky top-0 z-50 bg-zinc-800 border-b border-zinc-700 shadow-xl py-10 px-4">
+    <div
+      className="min-h-screen bg-cover bg-center bg-fixed text-white px-4 py-8 md:p-8"
+      style={backgroundStyle}
+    >
+      <div className="sticky top-0 z-50 bg-slate-950/70 backdrop-blur-md border-b border-white/10 shadow-xl py-10 px-4 rounded-b-3xl">
         <div className="max-w-4xl mx-auto space-y-6">
           <h1 className="text-3xl md:text-5xl font-bold text-center">
             Political Axis de la vida
           </h1>
 
           {playerName && (
-            <p className="text-center text-zinc-300">
+            <p className="text-center text-violet-200">
               Hola, {playerName}
             </p>
           )}
 
           <div className="space-y-3">
-            <div className="flex justify-between text-sm text-zinc-300">
+            <div className="flex justify-between text-sm text-violet-200">
               <span>Progrés</span>
               <span>
                 {currentQuestion}/{questions.length}
               </span>
             </div>
 
-            <div className="w-full bg-zinc-700 rounded-full h-4 overflow-hidden">
+            <div className="w-full bg-violet-900 rounded-full h-4 overflow-hidden">
               <div
-                className="bg-white h-full transition-all duration-300"
+                className="bg-violet-300 h-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -281,7 +291,7 @@ export default function PoliticalAxisQuiz() {
             ref={(el) => {
               questionRefs.current[i] = el;
             }}
-            className="bg-zinc-900 rounded-2xl p-4 shadow"
+            className="bg-violet-950/80 rounded-2xl p-4 shadow backdrop-blur-sm"
           >
             <p className="mb-4 text-sm md:text-base">
               {i + 1}. {question.text}
@@ -295,10 +305,10 @@ export default function PoliticalAxisQuiz() {
               onChange={(e) =>
                 updateAnswer(i, Number(e.target.value))
               }
-              className="w-full"
+              className="w-full accent-violet-300 cursor-pointer"
             />
 
-            <div className="flex justify-between text-xs text-zinc-400 mt-2 px-1">
+            <div className="flex justify-between text-xs text-violet-300 mt-2 px-1">
               <span>1</span>
               <span>2</span>
               <span>3</span>
@@ -311,35 +321,35 @@ export default function PoliticalAxisQuiz() {
         <div className="flex gap-4 flex-col md:flex-row">
           <button
             onClick={calculate}
-            className="w-full px-6 py-4 rounded-2xl bg-white text-black font-semibold text-lg"
+            className="w-full px-6 py-4 rounded-2xl bg-violet-200 text-black font-semibold text-lg hover:bg-white transition"
           >
             Calcula resultat
           </button>
 
           <button
             onClick={resetQuiz}
-            className="w-full px-6 py-4 rounded-2xl bg-zinc-700 text-white font-semibold text-lg"
+            className="w-full px-6 py-4 rounded-2xl bg-violet-800 text-white font-semibold text-lg hover:bg-violet-700 transition"
           >
             Reinicia test
           </button>
         </div>
 
         {result && (
-          <div className="bg-zinc-900 rounded-2xl p-12 md:p-20">
+          <div className="bg-violet-950/80 rounded-2xl p-12 md:p-20 backdrop-blur-sm">
             <h2 className="text-2xl font-bold mb-20 text-center">
               Mapa 2D
             </h2>
 
-            <div className="relative w-full aspect-square border-4 border-zinc-300 rounded-xl">
+            <div className="relative w-full aspect-square border-4 border-white/20 rounded-xl overflow-hidden">
               <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
-                <div className="bg-red-400" />
-                <div className="bg-blue-400" />
-                <div className="bg-green-400" />
-                <div className="bg-purple-400" />
+                <div className="bg-red-400/70" />
+                <div className="bg-blue-400/70" />
+                <div className="bg-green-400/70" />
+                <div className="bg-purple-400/70" />
               </div>
 
-              <div className="absolute top-1/2 left-0 w-full h-1 bg-black" />
-              <div className="absolute left-1/2 top-0 h-full w-1 bg-black" />
+              <div className="absolute top-1/2 left-0 w-full h-1 bg-black/40" />
+              <div className="absolute left-1/2 top-0 h-full w-1 bg-black/40" />
 
               <div className="absolute -top-14 left-1/2 -translate-x-1/2 font-bold">
                 Ordre
