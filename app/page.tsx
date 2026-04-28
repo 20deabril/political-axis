@@ -68,35 +68,18 @@ function buildQuiz(total: number): Question[] {
   let distribution: Record<AxisType, number>;
 
   if (total === 20) {
-    distribution = {
-      ordre: 5,
-      caos: 5,
-      fdp: 5,
-      gili: 5
-    };
+    distribution = { ordre: 5, caos: 5, fdp: 5, gili: 5 };
   } else if (total === 30) {
-    distribution = {
-      ordre: 8,
-      caos: 7,
-      fdp: 8,
-      gili: 7
-    };
+    distribution = { ordre: 8, caos: 7, fdp: 8, gili: 7 };
   } else {
-    distribution = {
-      ordre: 10,
-      caos: 10,
-      fdp: 10,
-      gili: 10
-    };
+    distribution = { ordre: 10, caos: 10, fdp: 10, gili: 10 };
   }
 
   const selected: Question[] = [];
 
   (Object.keys(distribution) as AxisType[]).forEach((type) => {
-    const amount = distribution[type];
-
     const picked = shuffle(questionBank[type])
-      .slice(0, amount)
+      .slice(0, distribution[type])
       .map((text) => ({
         text,
         type
@@ -113,7 +96,7 @@ export default function PoliticalAxisQuiz() {
   const [playerName, setPlayerName] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<number[]>([]);
-  const [answered, setAnswered] = useState<boolean[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState(1);
   const [result, setResult] = useState<{
     ordre: number;
     fdp: number;
@@ -126,7 +109,7 @@ export default function PoliticalAxisQuiz() {
 
     setQuestions(generated);
     setAnswers(Array(amount).fill(3));
-    setAnswered(Array(amount).fill(false));
+    setCurrentQuestion(1);
     setResult(null);
     setQuizStarted(true);
   };
@@ -136,17 +119,21 @@ export default function PoliticalAxisQuiz() {
     nextAnswers[index] = value;
     setAnswers(nextAnswers);
 
-    const nextAnswered = [...answered];
-    nextAnswered[index] = true;
-    setAnswered(nextAnswered);
+    const nextIndex = index + 1;
 
-    const nextQuestion = questionRefs.current[index + 1];
+    if (nextIndex < questions.length) {
+      setCurrentQuestion(nextIndex + 1);
 
-    if (nextQuestion) {
-      nextQuestion.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
+      const nextQuestion = questionRefs.current[nextIndex];
+
+      if (nextQuestion) {
+        nextQuestion.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+    } else {
+      setCurrentQuestion(questions.length);
     }
   };
 
@@ -166,20 +153,20 @@ export default function PoliticalAxisQuiz() {
 
     setResult({ ordre, fdp });
 
-fetch(
-  "https://script.google.com/macros/s/AKfycbzGOwarHVmaWCWrrT5JELdfauvi-nRghtWqH5LY7zxY6LUnmzLQ5o8BVQn4BUjTOHTs/exec",
-  {
-    method: "POST",
-    body: JSON.stringify({
-      name: playerName || "Anònim",
-      total: questions.length,
-      questions: questions.map((q) => q.text),
-      answers,
-      ordre,
-      fdp
-    })
-  }
-);
+    fetch(
+      "https://script.google.com/macros/s/AKfycbzGOwarHVmaWCWrrT5JELdfauvi-nRghtWqH5LY7zxY6LUnmzLQ5o8BVQn4BUjTOHTs/exec",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: playerName || "Anònim",
+          total: questions.length,
+          questions: questions.map((q) => q.text),
+          answers,
+          ordre,
+          fdp
+        })
+      }
+    );
   };
 
   const resetQuiz = () => {
@@ -187,7 +174,7 @@ fetch(
     setPlayerName("");
     setQuestions([]);
     setAnswers([]);
-    setAnswered([]);
+    setCurrentQuestion(1);
     setResult(null);
 
     window.scrollTo({
@@ -196,16 +183,10 @@ fetch(
     });
   };
 
-  const answeredQuestions = answered.filter(Boolean).length;
-
   const progress =
     questions.length > 0
-      ? (answeredQuestions / questions.length) * 100
+      ? (currentQuestion / questions.length) * 100
       : 0;
-
-  const allAnswered =
-    questions.length > 0 &&
-    answeredQuestions === questions.length;
 
   const point = result
     ? {
@@ -279,7 +260,7 @@ fetch(
             <div className="flex justify-between text-sm text-zinc-300">
               <span>Progrés</span>
               <span>
-                {answeredQuestions}/{questions.length}
+                {currentQuestion}/{questions.length}
               </span>
             </div>
 
@@ -330,12 +311,7 @@ fetch(
         <div className="flex gap-4 flex-col md:flex-row">
           <button
             onClick={calculate}
-            disabled={!allAnswered}
-            className={`w-full px-6 py-4 rounded-2xl font-semibold text-lg ${
-              allAnswered
-                ? "bg-white text-black"
-                : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
-            }`}
+            className="w-full px-6 py-4 rounded-2xl bg-white text-black font-semibold text-lg"
           >
             Calcula resultat
           </button>
