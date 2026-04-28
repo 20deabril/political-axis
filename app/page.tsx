@@ -110,6 +110,7 @@ function buildQuiz(total: number): Question[] {
 
 export default function PoliticalAxisQuiz() {
   const [quizStarted, setQuizStarted] = useState(false);
+  const [playerName, setPlayerName] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<number[]>([]);
   const [answered, setAnswered] = useState<boolean[]>([]);
@@ -168,6 +169,7 @@ export default function PoliticalAxisQuiz() {
 
   const resetQuiz = () => {
     setQuizStarted(false);
+    setPlayerName("");
     setQuestions([]);
     setAnswers([]);
     setAnswered([]);
@@ -180,6 +182,7 @@ export default function PoliticalAxisQuiz() {
   };
 
   const answeredQuestions = answered.filter(Boolean).length;
+
   const progress =
     questions.length > 0
       ? (answeredQuestions / questions.length) * 100
@@ -208,28 +211,36 @@ export default function PoliticalAxisQuiz() {
             Quantes preguntes vols?
           </p>
 
- <div className="space-y-4">
-  <button
-    onClick={() => startQuiz(20)}
-    className="w-full p-5 rounded-2xl bg-zinc-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98] active:bg-zinc-300"
-  >
-    20 (ràpid)
-  </button>
+          <input
+            type="text"
+            placeholder="Nom (opcional)"
+            value={playerName}
+            onChange={(e) => setPlayerName(e.target.value)}
+            className="w-full p-4 rounded-2xl bg-zinc-900 text-white border border-zinc-700 outline-none focus:border-white"
+          />
 
-  <button
-    onClick={() => startQuiz(30)}
-    className="w-full p-5 rounded-2xl bg-zinc-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98] active:bg-zinc-300"
-  >
-    30 (normal)
-  </button>
+          <div className="space-y-4">
+            <button
+              onClick={() => startQuiz(20)}
+              className="w-full p-5 rounded-2xl bg-zinc-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98] active:bg-zinc-300"
+            >
+              20 (ràpid)
+            </button>
 
-  <button
-    onClick={() => startQuiz(40)}
-    className="w-full p-5 rounded-2xl bg-zinc-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98] active:bg-zinc-300"
-  >
-    40 (profund)
-  </button>
-</div>
+            <button
+              onClick={() => startQuiz(30)}
+              className="w-full p-5 rounded-2xl bg-zinc-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98] active:bg-zinc-300"
+            >
+              30 (normal)
+            </button>
+
+            <button
+              onClick={() => startQuiz(40)}
+              className="w-full p-5 rounded-2xl bg-zinc-200 text-black font-semibold text-lg cursor-pointer transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98] active:bg-zinc-300"
+            >
+              40 (profund)
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -242,6 +253,12 @@ export default function PoliticalAxisQuiz() {
           <h1 className="text-3xl md:text-5xl font-bold text-center">
             Political Axis de la vida
           </h1>
+
+          {playerName && (
+            <p className="text-center text-zinc-300">
+              Hola, {playerName}
+            </p>
+          )}
 
           <div className="space-y-3">
             <div className="flex justify-between text-sm text-zinc-300">
